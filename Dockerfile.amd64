@@ -49,7 +49,8 @@ RUN apt update \
 
 ADD https://dl.winehq.org/wine-builds/winehq.key /Release.key
 
-RUN echo "deb http://dl.winehq.org/wine-builds/ubuntu/ xenial main" >> /etc/apt/sources.list && \
+RUN rm /var/cache/debconf/* && \
+        echo "deb http://dl.winehq.org/wine-builds/ubuntu/ xenial main" >> /etc/apt/sources.list && \
         apt-key add Release.key && \
         dpkg --add-architecture i386 && \
         apt-get update && \
