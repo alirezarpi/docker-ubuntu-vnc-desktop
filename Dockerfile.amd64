@@ -7,9 +7,7 @@
 FROM ubuntu:20.04 as system
 
 
-
 RUN sed -i 's#http://archive.ubuntu.com/ubuntu/#mirror://mirrors.ubuntu.com/mirrors.txt#' /etc/apt/sources.list;
-
 
 # built-in packages
 ENV DEBIAN_FRONTEND noninteractive
@@ -58,6 +56,11 @@ RUN rm /var/cache/debconf/* && \
         rm -rf /var/lib/apt/lists/* /Release.key
 
 ENV WINEARCH win32
+
+RUN groupadd -g 1000 wine \
+	&& useradd -g wine -u 1000 wine \
+	&& mkdir -p /home/wine/.wine && chown -R wine:wine /home/wine
+
 
 # Additional packages require ~600MB
 # libreoffice  pinta language-pack-zh-hant language-pack-gnome-zh-hant firefox-locale-zh-hant libreoffice-l10n-zh-tw
@@ -121,12 +124,10 @@ RUN cd /src/web \
 RUN sed -i 's#app/locale/#novnc/app/locale/#' /src/web/dist/static/novnc/app/ui.js
 
 
-
 ################################################################################
 # merge
 ################################################################################
 FROM system
-LABEL maintainer="fcwu.tw@gmail.com"
 
 COPY --from=builder /src/web/dist/ /usr/local/lib/web/frontend/
 COPY rootfs /
@@ -134,8 +135,12 @@ RUN ln -sf /usr/local/lib/web/frontend/static/websockify /usr/local/lib/web/fron
 	chmod +x /usr/local/lib/web/frontend/static/websockify/run
 
 EXPOSE 80
-WORKDIR /root
+
+USER wine
+
 ENV HOME=/home/ubuntu \
     SHELL=/bin/bash
+
 HEALTHCHECK --interval=30s --timeout=5s CMD curl --fail http://127.0.0.1:6079/api/health
+
 ENTRYPOINT ["/startup.sh"]
