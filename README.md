@@ -138,14 +138,18 @@ Following is the screen capture of these operations. Turn on your sound at the e
 
 ## Metatrader
 
-run `docker run -u 0 -v /home/alireza/mt-setup/:/root/.wine --rm -it -p 6080:80 alirezarpi/metatrader`
+First run `mkdir /tmp/mt-setup` then copy your <METATRADER>.exe (this is installer)
+
+run `docker run -u 0 -v /tmp/mt-setup/:/root/.wine --rm -it -p 6080:80 alirezarpi/metatrader`
 then head into the browser and enter YOUR_IP:6080.
 
 Then in the remote host open terminal and run `wine /root/.wine/<METATRADER>.exe`.
 
+after that run `mv /tmp/mt-setup/ /opt/mt-data/`
+
 This will install the metatrader on the `/root/.wine/` directory.
 
-At last run `docker run -d --name metatrader -u 0 -p 6080:80 -p 5900:5900 -e VNC_PASSWORD=Alireza@1234 -v /dev/shm:/dev/shm -v /home/alireza/mt-setup/:/root/.wine alirezarpi/metatrader`
+At last run `docker run -d --name metatrader -u 0 -p 6080:80 -p 5900:5900 -e VNC_PASSWORD=Alireza@1234 -v /dev/shm:/dev/shm -v /opt/mt-data/:/root/.wine alirezarpi/metatrader`
 
 ## Generate Dockerfile from jinja template
 
