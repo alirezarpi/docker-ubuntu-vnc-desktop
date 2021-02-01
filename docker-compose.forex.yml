@@ -1,0 +1,18 @@
+version: "3.7"
+
+services: 
+  metatrader:
+    image: alirezarpi/metatrader:latest
+    container_name: houseparty-forex
+    user: root
+    volumes:
+      - /dev/shm:/dev/shm
+      - /opt/mt-data/:/root/.wine
+    environment: 
+      - VNC_PASSWORD
+    networks:
+      - houseparty-network
+
+networks: 
+  houseparty-network:
+    external: true
